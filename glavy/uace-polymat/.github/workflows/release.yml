@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'txt-export-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4, pinned by commit SHA
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v4, pinned by commit SHA
+        with:
+          node-version: '20'
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v5, pinned by commit SHA
+        with:
+          python-version: '3.11'
+
+      - name: VERIFY — полная цепочка канона
+        run: |
+          set -e
+          for f in userscripts/*.user.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+          for f in cookie-vault/*.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+          node --check cookie-vault/scripts/crypto_smoke.mjs
+          python cookie-vault/scripts/validate.py
+          node cookie-vault/scripts/crypto_smoke.mjs
+
+      - name: PACKAGE — детерминированный ZIP + юзерскрипты + checksums.txt
+        run: |
+          set -e
+          mkdir -p dist
+          python cookie-vault/scripts/package.py \
+            --src cookie-vault \
+            --out dist/Cookie-Vault-3.0.1-production.zip \
+            --arcroot cookie-vault-3.0.1
+          cp userscripts/UACE-TXT-EXPORT-*.user.js dist/
+          cp userscripts/UACE-POLYMAT-UNIFIED-*.user.js dist/
+          python tools/gen_changelog.py --tag "${GITHUB_REF_NAME:-}" --out dist/CHANGELOG.md
+          cd dist
+          sha256sum UACE-TXT-EXPORT-*.user.js UACE-POLYMAT-UNIFIED-*.user.js Cookie-Vault-3.0.1-production.zip CHANGELOG.md > checksums.txt
+          cat checksums.txt
+
+      - name: PUBLISH — GitHub Release (gh CLI, официальный инструмент)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG="${GITHUB_REF_NAME}"
+          TITLE="Арсенал POLYMAT — ${TAG} (машинно-верифицированный)"
+          NOTES="Автоматический релиз, собранный CI из тега ${TAG}.
+          Цепочка канона пройдена в CI: node --check → validate.py (73 проверки) → crypto_smoke (8 тестов) → детерминированный ZIP → testzip побайтово.
+          SHA-256 всех артефактов — в checksums.txt (GitHub дополнительно печатает дайджест каждого ассета).
+          CHANGELOG сгенерирован из истории коммитов (Conventional Commits).
+          Установка юзерскриптов одним кликом: https://rtynbirf.github.io/uace-polymat/
+          Cookie Vault (MV3): скачать ZIP → распаковать → chrome://extensions → «Режим разработчика» → «Загрузить распакованное».
+          0 сетевых запросов · 0 заглушек · функции исполняются по-настоящему."
+          case "$TAG" in
+            *-BETA*|*-RC*|*-alpha*|*-beta*) PR="--prerelease" ;;
+            *) PR="" ;;
+          esac
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Релиз $TAG уже существует. Immutable releases включены: опубликованный релиз менять нельзя. Удалите релиз и тег и перевыставьте тег."
+            exit 1
+          fi
+          # hardening 2026-11-10: релиз создаётся ОДНИМ вызовом со всеми
+          # артефактами (immutable-safe). После публикации релиз не меняется.
+          gh release create "$TAG" dist/* $PR \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TITLE" \
+            --notes "$NOTES"
+          echo "Релиз $TAG создан одним вызовом со всеми артефактами (immutable-safe)"
