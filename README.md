@@ -38,6 +38,7 @@
 - Правки — только в оригиналах (ссылки в оглавлении выше); оригиналы архивированы read-only, история коммитов сохранена в них.
 - Ядро дома — [polymath-core](https://github.com/rtynbirf/polymath-core); живой реестр аккаунта — [index](https://github.com/rtynbirf/index).
 
+- Онлайн-версия тома: https://rtynbirf.github.io/uace/
 - Лицензия тома — MIT ([LICENSE](LICENSE)); у каждой главы — лицензия её оригинала.
 
 <!--ФОРЖ:ПОДВАЛ-->
