@@ -1,14 +1,14 @@
 # КНИГА UACE
 
 <div align="center">
-  <img src="banner.png" width="100%" alt="Штандарт uace: обсидиан и расплавленное золото, кузня rtynbirf" />
+  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace@main/banner.png" width="100%" alt="Штандарт uace: обсидиан и расплавленное золото, кузня rtynbirf" />
 </div>
 
 <!--ФОРЖ:МУЗА:НАЧАЛО-->
 <div align="center">
-  <img src="repo-muse.svg" width="100%" alt="Муза uace: мастерская МОНДРИАН · БУГИ, кузня ПОЛИМАТ, раунд 12 · REVE=РЕВО" />
+  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace@main/repo-muse.svg" width="100%" alt="Муза uace: мастерская МОНДРИАН · БУГИ, кузня ПОЛИМАТ, раунд 12 · REVE=РЕВО" />
   <br/>
-  <img src="forge-divider.svg" width="62%" alt="делитель мастерской МОНДРИАН · БУГИ" />
+  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace@main/forge-divider.svg" width="62%" alt="делитель мастерской МОНДРИАН · БУГИ" />
 </div>
 <!--ФОРЖ:МУЗА:КОНЕЦ-->
 
