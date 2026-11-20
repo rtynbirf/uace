@@ -31,8 +31,8 @@
 
 | Глава | Источник | Файлов | Коммитов в ориг. | Снимок |
 |---|---|---|---|---|
-| [uace-pml](glavy/uace-pml/) | [оригинал](https://github.com/rtynbirf/uace-pml) | 318 | 38 | `114bf13` |
-| [uace-polymat](glavy/uace-polymat/) | [оригинал](https://github.com/rtynbirf/uace-polymat) | 45 | 17 | `60022dd` |
+| [uace-pml](https://github.com/rtynbirf/uace/tree/main/glavy/uace-pml) | [оригинал](https://github.com/rtynbirf/uace-pml) | 318 | 38 | `114bf13` |
+| [uace-polymat](https://github.com/rtynbirf/uace/tree/main/glavy/uace-polymat) | [оригинал](https://github.com/rtynbirf/uace-polymat) | 45 | 17 | `60022dd` |
 
 ## О чём эта книга
 
